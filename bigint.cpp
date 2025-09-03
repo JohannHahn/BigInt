@@ -18,15 +18,53 @@ struct BigIntStr {
         str = std::to_string(n);
     }
     BigIntStr(const char* input) {
-        assert(is_number(input));
+        assert(is_number(input) && "input is not a number");
         str = input;
     }
     BigIntStr(const std::string& input) {
         assert(is_number(input));
         str = input;
     }
-    void add(u64 n) {
 
+    void add(u64 n) {
+        std::string number = std::to_string(n); 
+    }
+
+    void add(const char* n) {
+        std::string sn = n;
+        add(sn);
+    }
+
+    void add(const std::string& n) {
+        u64 carry = 0;
+        int i = str.length() - 1;
+        for (int j = n.length() - 1; j >= 0; j--) {
+            char str_digit = '0';
+            bool in_range =  i >= 0;
+            char c = n[j];
+
+            if (in_range) str_digit = str[i];
+
+            char digit_sum = c - '0' + str_digit + carry;
+            carry = 0;
+
+            if (digit_sum > '9') {
+                digit_sum -= 10;
+                carry = 1;
+            }
+            if (in_range) {
+                str[i] = digit_sum;
+            } 
+            else {
+                str = digit_sum + str; 
+            }
+
+            i--;
+        }
+    }
+
+    void add(const BigIntStr& n) {
+        add(n.str);
     }
 
     void halve() {
@@ -48,9 +86,7 @@ struct BigIntStr {
         BigIntStr copy = str;
         while (true) {
             char c = copy.str[copy.str.size() - 1];
-            std::cout << "c = " << c << "\n";
             c = (c - '0') % 2 + '0'; 
-            std::cout << "c mod 2 = " << c << "\n";
             bin = c + bin;
             copy.halve(); 
             if (copy.str.size() == 0 || 
@@ -72,6 +108,7 @@ int main() {
     //BigInt n = 100;
     BigIntStr s = 100;
     BigIntStr s2 = "10";
+    s2.add("234");
 
     std::cout << "s = " << s.str << "\n";
     std::cout << "s2 = " << s2.str << "\n";
