@@ -62,6 +62,7 @@ struct BigIntStr {
 
             i--;
         }
+        if (carry) str = '1' + str;
     }
 
     void add(const BigIntStr& n) {
@@ -142,14 +143,15 @@ int main() {
     BigIntStr a = 1;
     BigIntStr b = 1;
     BigIntStr c = 1;
-    std::cout << a.str << "\n";
-    std::cout << b.str << "\n";
+    std::cout << "1: " << a.str << "\n";
+    std::cout << "2: " << b.str << "\n";
 
     u64 max = 10;
-    for (int i = 0; i < max; ++i) {
+    for (int i = 2; i < max; ++i) {
         c = a;
         c.add(b);
-        std::cout << c.str << "\n";
+        assert(BigIntStr::is_number(c.str));
+        std::cout << i + 1 << ": " << c.str << "\n";
         a = b;
         b = c;
     }
