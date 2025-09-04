@@ -2,6 +2,7 @@
 #include <string>
 #include <assert.h>
 #include <math.h>
+#include <chrono>
 
 typedef uint64_t u64;
 typedef uint32_t u32;
@@ -145,16 +146,32 @@ int main() {
     BigIntStr c = 1;
     std::cout << "1: " << a.str << "\n";
     std::cout << "2: " << b.str << "\n";
+    u64 i = 2;
+    std::chrono::milliseconds diff;// = std::chrono::duration_cast<std::chrono::milliseconds>(end-start);
+    auto end = std::chrono::system_clock::now();
+    auto start = std::chrono::system_clock::now();
 
-    u64 max = 10;
-    for (int i = 2; i < max; ++i) {
+    while (true) {
         c = a;
         c.add(b);
-        assert(BigIntStr::is_number(c.str));
-        std::cout << i + 1 << ": " << c.str << "\n";
         a = b;
         b = c;
+        diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()-start);
+        if(diff.count() >= 1000) break;
+        i++; 
     }
+    std::cout << "calculated " << i << " fibonacci numbers in 1 second\n";
+    std::cout << " last fib = " << c.str << "\n";
+
+    //u64 max = 10;
+    //for (int i = 2; i < max; ++i) {
+    //    c = a;
+    //    c.add(b);
+    //    assert(BigIntStr::is_number(c.str));
+    //    std::cout << i + 1 << ": " << c.str << "\n";
+    //    a = b;
+    //    b = c;
+    //}
 
     return 0;
 }
