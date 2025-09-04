@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <assert.h>
+#include <math.h>
 
 typedef uint64_t u64;
 typedef uint32_t u32;
@@ -76,9 +77,12 @@ struct BigIntStr {
             else next_additive = 0;
             c = (c - '0') / 2 + additive + '0';
         }
-        for (const char& c : str) {
-            if (c == '0') str = str.substr(1, str.size() - 1);
+        u64 zeroes = 0;
+        for (int i = 0; i < str.size(); ++i) {
+            if (str[i] == '0') zeroes++;
+            else break;
         }
+        str = str.substr(zeroes, str.size() - zeroes);
     }
 
     std::string to_binary() {
@@ -104,18 +108,51 @@ struct BigIntStr {
 
 };
 
+u64 bit_length(u64 n) {
+    u64 len = 0;
+    while (n > 1) {
+        n /= 2;
+        len++;
+    }
+    return len;
+}
+
+bool test_str() {
+    int start = 0;
+    int end = 1024;
+    for (int i = start; i < end; ++i) {
+        BigIntStr n = i;
+        std::string bin = n.to_binary();
+        std::string bin_precalc = "";
+        if (bin.size() < bit_length(i)) {
+            //std::cout << "n   = " << n.str << "\n";
+            //std::cout << "bin = " << bin << "\n";
+            return false;
+        }
+    }
+    return true;
+}
+
 int main() {
-    //BigInt n = 100;
-    BigIntStr s = 100;
-    BigIntStr s2 = "10";
-    s2.add("234");
+    bool str_pass = test_str();
+    if (str_pass) std::cout << "TEST: String test passed\n";
+    else std::cout << "TEST: String test FAILED!!!\n";
+    assert(str_pass);
 
-    std::cout << "s = " << s.str << "\n";
-    std::cout << "s2 = " << s2.str << "\n";
+    BigIntStr a = 1;
+    BigIntStr b = 1;
+    BigIntStr c = 1;
+    std::cout << a.str << "\n";
+    std::cout << b.str << "\n";
 
-    std::string bin = s2.to_binary(); 
-    std::cout << "s2 in binary = " << bin << "\n";
-
+    u64 max = 10;
+    for (int i = 0; i < max; ++i) {
+        c = a;
+        c.add(b);
+        std::cout << c.str << "\n";
+        a = b;
+        b = c;
+    }
 
     return 0;
 }
